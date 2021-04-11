@@ -51,5 +51,16 @@ namespace SampleApi.Two.Controllers
 
             return new OkObjectResult($"Entry saved to table { _settings.TableName }");
         }
+
+        /// <summary>
+        /// https://localhost:5003/api/test/test2
+        /// </summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        [HttpGet("test2")]
+        public IActionResult Test2Async(CancellationToken ct = default)
+        {
+            return new OkObjectResult($"Validated!");
+        }
     }
 }

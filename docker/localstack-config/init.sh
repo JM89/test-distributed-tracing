@@ -25,6 +25,10 @@ aws lambda create-function --function-name streamer-lambda \
     --role arn:aws:iam::000000000000:role/streamer-lambda-role \
     --region eu-west-2 --endpoint-url http://localstack:4566
 
+aws lambda update-function-configuration --function-name streamer-lambda \
+    --environment "Variables={Settings__DistributedTracingOptions__Exporter=OtlpCollector,Settings__DistributedTracingOptions__OtlpEndpointUrl=http://host.docker.internal:55680,Settings__SampleApiTwoTestEndpointUrl=http://host.docker.internal:5124/api/test/test2}" \
+    --region eu-west-2 --endpoint-url http://localstack:4566
+
 export AWS_STREAM_NAME=`aws dynamodbstreams list-streams --region eu-west-2 --endpoint-url http://localhost:4566 --output text | awk -F"\t" '$1=="STREAMS" {print $2}'`
 
 aws lambda create-event-source-mapping \

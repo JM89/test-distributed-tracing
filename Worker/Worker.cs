@@ -53,8 +53,12 @@ namespace Worker
                             var hasParentTrace = message.MessageAttributes.TryGetValue("TraceParentId", out MessageAttributeValue value);
                             if (hasParentTrace)
                             {
-                                // Activity.Current?.SetParentId(value.StringValue); Activity.Current is null in the Background service
-                                activity.SetParentId(value.StringValue);
+                                var traceInfo = value.StringValue.Split("-");
+                                if (traceInfo.Length == 4)
+                                {
+                                    // Activity.Current?.SetParentId(value.StringValue); Activity.Current is null in the Background service
+                                    activity.SetParentId(traceInfo[2]);
+                                }
                             }
 
                             activity.AddSqsConsumerTags(_settings.QueueName, queueUrl);

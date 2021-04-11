@@ -33,7 +33,7 @@ namespace SampleApi.Two
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddOpenTelemetryTracing((builder) =>
+            services.AddOpenTelemetryTracing(builder =>
             {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
@@ -63,32 +63,8 @@ namespace SampleApi.Two
                             }
                         };
                     })
-                    .AddConsoleExporter();
-
-                if (settings.DistributedTracingOptions.Exporter == Exporter.ZipKin)
-                {
-                    builder.AddZipkinExporter(opt =>
-                    {
-                        opt.Endpoint = new Uri(settings.DistributedTracingOptions.ZipkinEndpointUrl);
-                    });
-                }
-
-                if (settings.DistributedTracingOptions.Exporter == Exporter.OtlpCollector)
-                {
-                    var uri = new Uri(settings.DistributedTracingOptions.OtlpEndpointUrl);
-
-                    if (uri.Scheme == "http")
-                    {
-                        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                    }
-
-                    builder.AddOtlpExporter(opt =>
-                    {
-                        opt.Endpoint = uri;
-                    });
-                }
-            }
-            );
+                    .ConfigureExporter(settings.DistributedTracingOptions);
+            });
             return services;
         }
     }

@@ -1,7 +1,9 @@
-using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.DynamoDBEvents;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyLambda.Services;
+using Shared;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,34 +14,36 @@ namespace MyLambda
 {
     public class Function
     {
-        private static readonly JsonSerializer _jsonSerializer = new JsonSerializer();
+        private readonly IDynamoDbItemService _dynamoDbItemService;
 
-        public Task FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
+        public Function()
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            configuration.LogSettings("Settings");
+
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.RegisterAppServices(configuration);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            _dynamoDbItemService = serviceProvider.GetRequiredService<IDynamoDbItemService>();
+        }
+
+        public async Task FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
         {
             context.Logger.LogLine($"Beginning to process {dynamoEvent.Records.Count} records...");
 
             foreach (var record in dynamoEvent.Records)
             {
-                context.Logger.LogLine($"Event ID: {record.EventID}");
-                context.Logger.LogLine($"Event Name: {record.EventName}");
-
-                string streamRecordJson = SerializeStreamRecord(record.Dynamodb);
-                context.Logger.LogLine($"DynamoDB Record:");
-                context.Logger.LogLine(streamRecordJson);
+                await _dynamoDbItemService.DoSomethingAsync(record, context.Logger);
             }
 
             context.Logger.LogLine("Stream processing complete.");
-
-            return Task.CompletedTask;
-        }
-
-        private string SerializeStreamRecord(StreamRecord streamRecord)
-        {
-            using (var writer = new StringWriter())
-            {
-                _jsonSerializer.Serialize(writer, streamRecord);
-                return writer.ToString();
-            }
         }
     }
 }
