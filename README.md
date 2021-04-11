@@ -24,7 +24,8 @@ docker-compose -f docker-compose.yml -f docker-compose-otel-collector.yml up --b
 Backends:
 * Zipkin (traces): http://localhost:9411/
 * Jaeger (traces): http://localhost:16686/
-* Prometheus (metrics): http://localhost:9090/
+* Prometheus (OTLP metrics): http://localhost:9090/
+    - [Example for app metrics](https://github.com/open-telemetry/opentelemetry-dotnet/blob/reyang/metrics/examples/Console/TestPrometheusExporter.cs)
 
 Architecture:
 
