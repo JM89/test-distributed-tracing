@@ -26,7 +26,15 @@ namespace SampleApi.Two
                         ServiceURL = settings.AwsServiceUrl
                     }));
 
-            services.AddOpenTelemetryTracing((builder) => {
+            services.RegisterOpenTelemetry(settings);
+
+            return services;
+        }
+
+        public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
+        {
+            services.AddOpenTelemetryTracing((builder) =>
+            {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
                     .AddAspNetCoreInstrumentation()
@@ -81,8 +89,7 @@ namespace SampleApi.Two
                 }
             }
             );
-
-            return services; 
+            return services;
         }
     }
 }

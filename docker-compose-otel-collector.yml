@@ -40,3 +40,9 @@ services:
       - Settings:DistributedTracingOptions:Exporter=OtlpCollector
       - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:55680
       - Settings:DistributedTracingOptions:ZipkinEndpointUrl=
+
+  worker:
+    environment:
+      - Settings:DistributedTracingOptions:Exporter=OtlpCollector
+      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:55680
+      - Settings:DistributedTracingOptions:ZipkinEndpointUrl=

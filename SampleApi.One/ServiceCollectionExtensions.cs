@@ -26,15 +26,21 @@ namespace SampleApi.One
                         ServiceURL = settings.AwsServiceUrl
                     }));
 
-            services.AddSingleton(new ActivitySource("Sqs.Instrumentation"));
+            services.RegisterOpenTelemetry(settings);
 
+            return services;
+        }
+
+        public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
+        {
+            services.AddSingleton(new ActivitySource("Sqs.Instrumentation"));
             services.AddOpenTelemetryTracing((builder) => {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
                     .AddAspNetCoreInstrumentation()
                     .AddSource("Sqs.Instrumentation")
                     .AddConsoleExporter();
-                    
+
                 if (settings.DistributedTracingOptions.Exporter == Exporter.ZipKin)
                 {
                     builder.AddZipkinExporter(opt =>
@@ -59,7 +65,6 @@ namespace SampleApi.One
                 }
             }
             );
-
             return services;
         }
     }

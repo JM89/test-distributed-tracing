@@ -19,3 +19,10 @@ services:
       - Settings:DistributedTracingOptions:Exporter=ZipKin
       - Settings:DistributedTracingOptions:OtlpEndpointUrl=
       - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
+	  
+  worker:
+    environment:
+      - Settings:DistributedTracingOptions:Exporter=ZipKin
+      - Settings:DistributedTracingOptions:OtlpEndpointUrl=
+      - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
+

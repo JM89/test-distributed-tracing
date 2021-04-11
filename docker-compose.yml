@@ -49,3 +49,16 @@ services:
       - AWS_DEFAULT_REGION=eu-west-2
     ports:
       - "5124:5000"
+
+  worker:
+    container_name: worker
+    build:
+      context: ./
+      dockerfile: ./docker/worker/Dockerfile
+    environment:
+      - Settings:ServiceName=Worker
+      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:QueueName=sample-api-one
+      - AWS_ACCESS_KEY_ID=xxx
+      - AWS_SECRET_ACCESS_KEY=xxx
+      - AWS_DEFAULT_REGION=eu-west-2
