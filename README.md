@@ -29,6 +29,10 @@ Architecture:
 
 ### Endpoint URLs
 
-From Docker:
+Docker:
 - SampleApi.One Test: http://localhost:5123/api/test/test
 - SampleApi.Two Test: http://localhost:5124/api/test/test
+
+Visual Studio:
+- SampleApi.One Test: https://localhost:5001/api/test/test
+- SampleApi.Two Test: https://localhost:5001/api/test/test
