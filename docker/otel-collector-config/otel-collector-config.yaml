@@ -10,6 +10,11 @@ exporters:
   jaeger:
     endpoint: jaeger:14250
     insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: otlp-metrics
+    const_labels:
+      env: local
 
 processors:
   batch:
@@ -26,3 +31,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [jaeger,zipkin]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
