@@ -25,7 +25,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5000
       - Settings:ServiceName=SampleApi.One
-      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:AwsServiceUrl=http://localstack:4566
       - Settings:QueueName=sample-api-one
       - Settings:SampleApiTwoTestEndpointUrl=http://sample-api-two:5000/api/test/test
       - AWS_ACCESS_KEY_ID=xxx
@@ -42,7 +42,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5000
       - Settings:ServiceName=SampleApi.Two
-      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:AwsServiceUrl=http://localstack:4566
       - Settings:TableName=sample-table
       - AWS_ACCESS_KEY_ID=xxx
       - AWS_SECRET_ACCESS_KEY=xxx
@@ -57,7 +57,7 @@ services:
       dockerfile: ./docker/worker/Dockerfile
     environment:
       - Settings:ServiceName=Worker
-      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:AwsServiceUrl=http://localstack:4566
       - Settings:QueueName=sample-api-one
       - AWS_ACCESS_KEY_ID=xxx
       - AWS_SECRET_ACCESS_KEY=xxx

@@ -2,6 +2,7 @@
 using Amazon.SQS.Model;
 using Flurl.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,20 +53,22 @@ namespace SampleApi.One.Controllers
             {
                 var queueUrl = $"{_settings.AwsServiceUrl}/000000000000/{_settings.QueueName}";
 
-                using (var activity = _activitySource.StartActivity("SendMessage"))
+                using (var activity = _activitySource.StartActivity("send", ActivityKind.Producer))
                 {
-                    activity.AddTag("QueueName", _settings.QueueName);
+                    activity.AddSqsProducerTags(_settings.QueueName, queueUrl);
 
                     var msg = new SendMessageRequest()
                     {
                         QueueUrl = queueUrl,
                         MessageBody = $"Helloworld from {_settings.ServiceName}",
                         MessageAttributes = new Dictionary<string, MessageAttributeValue>() {
-                        { "TraceParentId", new MessageAttributeValue() { DataType = "String", StringValue = activity.ParentId ?? "None" } }
-                    }
+                        { 
+                            "TraceParentId", new MessageAttributeValue() { DataType = "String", StringValue = activity.ParentId ?? "None" } }
+                        }
                     };
 
-                    await _sqsClient.SendMessageAsync(msg, ct);
+                    var response = await _sqsClient.SendMessageAsync(msg, ct);
+                    activity.AddTag("status.code", response.HttpStatusCode);
                 }
             }
             catch (Exception ex)

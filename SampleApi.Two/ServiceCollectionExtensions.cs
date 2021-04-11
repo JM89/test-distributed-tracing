@@ -51,7 +51,7 @@ namespace SampleApi.Two
                             {
                                 if (rawObject is HttpRequestMessage request && request.Headers.Contains("X-Amz-Target"))
                                 {
-                                    activity.SetTag("aws.operation", string.Join(",", request.Headers.GetValues("X-Amz-Target")));
+                                    activity.AddDynamoDbTags(settings.TableName, string.Join(",", request.Headers.GetValues("X-Amz-Target")));
                                 }
                             }
                             else if (eventName.Equals("OnException"))
