@@ -47,3 +47,12 @@ Go to the Lambda folder then run:
 ```
 sh deploy_function.sh
 ```
+
+CW Logs:
+```
+aws logs filter-log-events --log-group "/aws/lambda/streamer-lambda" --endpoint-url http://localhost:4566 --region eu-west-2
+
+aws logs get-log-events --log-group "/aws/lambda/streamer-lambda" --log-stream-name "<stream-name>" --endpoint-url http://localhost:4566 --region eu-west-2
+```
+
+eg. "logStreamName": "2021/04/11/[LATEST]84b11d1c"
