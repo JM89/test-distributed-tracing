@@ -1,4 +1,4 @@
-# OpenTelemetry Instrumentation
+# Distributed Tracing Instrumentation Playground
 
 ## Getting Started
 
