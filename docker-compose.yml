@@ -1,0 +1,51 @@
+version: "3.3"
+
+services:
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    environment:
+      - SERVICES=sqs,dynamodb
+      - DEFAULT_REGION=eu-west-2
+      - HOSTNAME=localstack
+      - AWS_ACCESS_KEY_ID=xxx
+      - AWS_SECRET_ACCESS_KEY=xxx
+      - AWS_DEFAULT_REGION=eu-west-2
+    volumes:
+      - "./docker/localstack-config:/docker-entrypoint-initaws.d"
+    ports:
+      - "4566:4566"
+
+  sample-api-one:
+    container_name: sample-api-one
+    build:
+      context: ./
+      dockerfile: ./docker/sample-api-one/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - Settings:ServiceName=SampleApi.One
+      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:QueueName=sample-api-one
+      - Settings:SampleApiTwoTestEndpointUrl=http://sample-api-two:5000/api/test/test
+      - AWS_ACCESS_KEY_ID=xxx
+      - AWS_SECRET_ACCESS_KEY=xxx
+      - AWS_DEFAULT_REGION=eu-west-2
+    ports:
+      - "5123:5000"
+
+  sample-api-two:
+    container_name: sample-api-two
+    build:
+      context: ./
+      dockerfile: ./docker/sample-api-two/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - Settings:ServiceName=SampleApi.Two
+      - Settings:AwsServiceUrl=http://localstack:4566/
+      - Settings:TableName=sample-table
+      - AWS_ACCESS_KEY_ID=xxx
+      - AWS_SECRET_ACCESS_KEY=xxx
+      - AWS_DEFAULT_REGION=eu-west-2
+    ports:
+      - "5124:5000"
