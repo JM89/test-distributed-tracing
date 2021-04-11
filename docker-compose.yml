@@ -6,14 +6,18 @@ services:
     image: localstack/localstack
     container_name: localstack
     environment:
-      - SERVICES=sqs,dynamodb
+      - SERVICES=sqs,dynamodb,iam,lambda,dynamodbstreams,cloudwatchlogs
       - DEFAULT_REGION=eu-west-2
       - HOSTNAME=localstack
       - AWS_ACCESS_KEY_ID=xxx
       - AWS_SECRET_ACCESS_KEY=xxx
       - AWS_DEFAULT_REGION=eu-west-2
+      - LAMBDA_EXECUTOR=docker
+      - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "./docker/localstack-config:/docker-entrypoint-initaws.d"
+      - "./docker/localstack-config:/opt/code/localstack/files"
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "4566:4566"
 

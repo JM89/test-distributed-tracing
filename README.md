@@ -40,3 +40,10 @@ Docker:
 Visual Studio:
 - SampleApi.One Test: https://localhost:5001/api/test/test
 - SampleApi.Two Test: https://localhost:5001/api/test/test
+
+### Re-deploy the lambda
+
+Go to the Lambda folder then run:
+```
+sh deploy_function.sh
+```

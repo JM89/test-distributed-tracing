@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Worker", "Worker\Worker.csproj", "{1F1BF7C7-AA83-493A-AC7A-BF8BF5AAE6C6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLambda", "Lambda\MyLambda.csproj", "{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1F1BF7C7-AA83-493A-AC7A-BF8BF5AAE6C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F1BF7C7-AA83-493A-AC7A-BF8BF5AAE6C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F1BF7C7-AA83-493A-AC7A-BF8BF5AAE6C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
