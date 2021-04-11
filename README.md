@@ -1,4 +1,4 @@
-# OpenTelemetry Instrumentation
+# OpenTelemetry Instrumentation Playground
 
 ## Getting Started
 
