@@ -8,7 +8,8 @@
 docker-compose -f docker-compose.yml -f docker-compose-zipkin.yml up --build
 ```
 
-Zipkin: http://localhost:9411/
+Backend:
+* Zipkin: http://localhost:9411/
 
 Architecture:
 
@@ -20,8 +21,9 @@ Architecture:
 docker-compose -f docker-compose.yml -f docker-compose-otel-collector.yml up --build
 ```
 
-Zipkin: http://localhost:9411/
-Jaeger: http://localhost:16686/
+Backends:
+* Zipkin: http://localhost:9411/
+* Jaeger: http://localhost:16686/
 
 Architecture:
 
