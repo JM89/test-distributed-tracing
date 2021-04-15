@@ -57,6 +57,9 @@ namespace MyLambda.Services
             {
                 using (var activity = _activitySource.StartActivity("call-api", ActivityKind.Client))
                 {
+                    logger.LogLine("Activity StartTimeUtc: " + activity?.StartTimeUtc);
+                    logger.LogLine("OtlpEndpointUrl: " + _settings.DistributedTracingOptions.OtlpEndpointUrl);
+                    
                     if (!string.IsNullOrEmpty(ParentId))
                     {
                         activity.SetParentId(ParentId);

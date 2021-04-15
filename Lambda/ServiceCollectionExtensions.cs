@@ -4,12 +4,15 @@ using MyLambda.Services;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Shared;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace MyLambda
 {
     public static class ServiceCollectionExtensions
     {
+        public static List<Activity> InMemoryActivities = new List<Activity>();
+
         public static IServiceCollection RegisterAppServices(this IServiceCollection services, IConfiguration configuration)
         {
             var settings = configuration.GetSection("Settings").Get<Settings>();

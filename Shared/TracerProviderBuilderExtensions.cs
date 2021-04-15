@@ -1,4 +1,5 @@
-﻿using OpenTelemetry.Trace;
+﻿using OpenTelemetry;
+using OpenTelemetry.Trace;
 using System;
 
 namespace Shared
@@ -12,6 +13,7 @@ namespace Shared
                 builder.AddZipkinExporter(opt =>
                 {
                     opt.Endpoint = new Uri(opts.ZipkinEndpointUrl);
+                    opt.ExportProcessorType = ExportProcessorType.Simple;
                 });
             }
 
@@ -27,6 +29,7 @@ namespace Shared
                 builder.AddOtlpExporter(opt =>
                 {
                     opt.Endpoint = uri;
+                    opt.ExportProcessorType = ExportProcessorType.Simple;
                 });
             }
 
