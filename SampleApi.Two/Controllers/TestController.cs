@@ -38,7 +38,7 @@ namespace SampleApi.Two.Controllers
                     Item = new Dictionary<string, AttributeValue>()
                     {
                         { "KeyId", new AttributeValue { S = Guid.NewGuid().ToString() } },
-                        { "ParentTraceId", new AttributeValue { S = Activity.Current?.ParentId ?? "None" } },
+                        { "ParentTraceId", new AttributeValue { S = Activity.Current?.Id ?? "None" } },
                         { "Payload", new AttributeValue { S = "{\"important-msg\": \"helloworld\"}" } }
                     }
                 };

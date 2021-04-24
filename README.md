@@ -31,6 +31,10 @@ Architecture:
 
 ![](images/OT-Collector.PNG)
 
+Full trace:
+
+![](images/FullTrace.PNG)
+
 ### Endpoint URLs
 
 Docker:

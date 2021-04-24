@@ -33,7 +33,10 @@ namespace MyLambdaTests
                         EventName = "Name",
                         Dynamodb = new Amazon.DynamoDBv2.Model.StreamRecord()
                         {
-                            
+                            NewImage = new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue>()
+                            {
+                                {"ParentTraceId" , new Amazon.DynamoDBv2.Model.AttributeValue() { S = "00-6354617bdf314d4ebd3fb4cffb641aab-719b9c4acd868142-01" } }
+                            }
                         }
                     }
                 }

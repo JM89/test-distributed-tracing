@@ -47,34 +47,37 @@ namespace Worker
 
                     foreach (var message in receiveMessageResponse.Messages)
                     {
-                        using (var activity = _activitySource.StartActivity("receive", ActivityKind.Consumer))
+                        Activity activity = null;
+
+                        try
                         {
-                            // invalid parent span IDs=664fd616639bf448; skipping clock skew adjustment
-                            var hasParentTrace = message.MessageAttributes.TryGetValue("TraceParentId", out MessageAttributeValue value);
+                            var hasParentTrace =
+                                message.MessageAttributes.TryGetValue("TraceParentId", out MessageAttributeValue value);
+
                             if (hasParentTrace)
                             {
-                                var traceInfo = value.StringValue.Split("-");
-                                if (traceInfo.Length == 4)
-                                {
-                                    // Activity.Current?.SetParentId(value.StringValue); Activity.Current is null in the Background service
-                                    activity.SetParentId(traceInfo[2]);
-                                }
+                                activity = _activitySource.StartActivity("receive", ActivityKind.Consumer,
+                                    value.StringValue, startTime: DateTimeOffset.UtcNow);
+                            }
+                            else
+                            {
+                                activity = _activitySource.StartActivity("receive", ActivityKind.Consumer);
                             }
 
-                            activity.AddSqsConsumerTags(_settings.QueueName, queueUrl);
-                            activity.AddTag("messaging.conversation_id", activity.ParentSpanId.ToHexString() ?? "None");
+                            activity?.AddSqsConsumerTags(_settings.QueueName, queueUrl);
+                            activity?.AddTag("messaging.conversation_id", activity.ParentSpanId.ToHexString() ?? "None");
 
                             using (var subActivity = _activitySource.StartActivity("ProcessMessage"))
                             {
-                                subActivity.AddSqsConsumerTags(_settings.QueueName, queueUrl);
-                                subActivity.AddTag("messaging.operation", "process");
+                                subActivity?.AddSqsConsumerTags(_settings.QueueName, queueUrl);
+                                subActivity?.AddTag("messaging.operation", "process");
 
                                 await _sqsHandler.ProcessMessageAsync(message, stoppingToken);
                             }
 
                             using (var subActivity = _activitySource.StartActivity("DeleteMessageFromQueue"))
                             {
-                                subActivity.AddSqsConsumerTags(_settings.QueueName, queueUrl);
+                                subActivity?.AddSqsConsumerTags(_settings.QueueName, queueUrl);
 
                                 await _sqsClient.DeleteMessageAsync(new DeleteMessageRequest()
                                 {
@@ -83,7 +86,13 @@ namespace Worker
                                 }, stoppingToken);
                             }
                         }
+                        finally
+                        {
+                            activity?.Stop();
+                            activity?.Dispose();
+                        }
                     }
+
                     await Task.Delay(1000, stoppingToken);
                 }
                 catch(Exception ex)

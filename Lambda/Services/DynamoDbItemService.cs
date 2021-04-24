@@ -25,7 +25,7 @@ namespace MyLambda.Services
 
         public async Task<bool> DoSomethingAsync(DynamodbStreamRecord record, ILambdaLogger logger)
         {
-            string ParentId = "", TraceId = "";
+            string ParentId = "", TraceId = "", TraceParentId = "";
 
             logger.LogLine($"Event ID: {record.EventID}");
             logger.LogLine($"Event Name: {record.EventName}");
@@ -34,11 +34,11 @@ namespace MyLambda.Services
             {
                 _jsonSerializer.Serialize(writer, record.Dynamodb);
 
-                // invalid parent span IDs=664fd616639bf448; skipping clock skew adjustment
                 var hasParentTrace = record.Dynamodb.NewImage.TryGetValue("ParentTraceId", out AttributeValue value);
                 if (hasParentTrace)
                 {
                     logger.LogLine($"ParentTraceId: {value.S}");
+                    TraceParentId = value.S;
                     var traceInfo = value.S.Split("-");
                     if (traceInfo.Length == 4)
                     {
@@ -55,28 +55,38 @@ namespace MyLambda.Services
 
             try
             {
-                using (var activity = _activitySource.StartActivity("call-api", ActivityKind.Client))
-                {
+                Activity activity = null;
+
+                try
+                { 
+                    if (!string.IsNullOrEmpty(TraceParentId))
+                    {
+                        activity = _activitySource.StartActivity("call-api", ActivityKind.Client,
+                            TraceParentId, startTime: DateTimeOffset.UtcNow);
+                    }
+                    else
+                    {
+                        activity = _activitySource.StartActivity("call-api", ActivityKind.Client);
+                    }
+
                     logger.LogLine("Activity StartTimeUtc: " + activity?.StartTimeUtc);
                     logger.LogLine("OtlpEndpointUrl: " + _settings.DistributedTracingOptions.OtlpEndpointUrl);
-                    
-                    if (!string.IsNullOrEmpty(ParentId))
-                    {
-                        activity.SetParentId(ParentId);
-                    }
 
                     if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
                     {
                         logger.LogLine("Calling SampleApi.Two");
                         var response = await _settings.SampleApiTwoTestEndpointUrl
-                            .WithHeader("trace-id", TraceId)
-                            .WithHeader("parent-id", ParentId)
+                            .WithHeader("traceparent", activity.Id)
                             .GetStringAsync();
                         logger.LogLine($"SampleApi.Two called successfully: {response}");
                     }
+                    return true;
                 }
-                   
-                return true;
+                finally
+                {
+                    activity?.Stop();
+                    activity?.Dispose();
+                }
             }
             catch (Exception ex)
             {
