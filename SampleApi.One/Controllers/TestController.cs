@@ -39,7 +39,10 @@ namespace SampleApi.One.Controllers
                 if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
                 {
                     Console.WriteLine("Calling SampleApi.Two");
-                    var response = await _settings.SampleApiTwoTestEndpointUrl.GetStringAsync();
+                    var response = await _settings
+                        .SampleApiTwoTestEndpointUrl
+                        .WithHeader("traceparent", Activity.Current?.Id)
+                        .GetStringAsync();
                     Console.WriteLine($"SampleApi.Two called successfully: {response}");
                 }
 
@@ -63,7 +66,7 @@ namespace SampleApi.One.Controllers
                         MessageBody = $"Helloworld from {_settings.ServiceName}",
                         MessageAttributes = new Dictionary<string, MessageAttributeValue>() {
                         { 
-                            "TraceParentId", new MessageAttributeValue() { DataType = "String", StringValue = activity.ParentId ?? "None" } }
+                            "TraceParentId", new MessageAttributeValue() { DataType = "String", StringValue = activity.Id ?? "None" } }
                         }
                     };
 
