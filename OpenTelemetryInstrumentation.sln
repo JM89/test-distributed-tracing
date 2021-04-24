@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Worker", "Worker\Worker.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLambda", "Lambda\MyLambda.csproj", "{0DF765A7-EA70-488D-B57E-2A1D2624F9AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLambdaTests", "MyLambdaTests\MyLambdaTests.csproj", "{0F092444-CB8B-490E-AB3D-41384DC54E8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLambdaTests", "LambdaTests\MyLambdaTests.csproj", "{0F092444-CB8B-490E-AB3D-41384DC54E8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
