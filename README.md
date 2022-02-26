@@ -2,7 +2,7 @@
 
 This solution contains a set of C# services and AWS resources (run in localstack) to explore distributed tracing (intrumentation and visualization) with a concrete example that uses both async and sync communication. 
 
-![](images/BaseSolution.PNG)
+![](images/BaseSolution.png)
 
 To run the solution, you only need docker installed. If you wish to extend the solution, it was developed for .NET SDK 3.1 originally. 
 
