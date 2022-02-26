@@ -10,9 +10,9 @@ A test endpoint is made available for the user (us). When called, the first API 
 
 ## Getting Started
 
-You can choose two options to get started:
-- Zipkin backend is a very simple example that reuses its own exporter.
-- OTEL collector is a more detailed example, that shows how to use OpenTelemetry to deliver both backend solutions that are Zipkin and Jaeger.  
+You can choose two options to get started with this solution:
+- Zipkin backend option is a very simple example that reuses its own exporter.
+- OTEL collector option is a more detailed example, that shows how to use OpenTelemetry to deliver both backend solutions that are Zipkin and Jaeger.  
 
 Both option uses OpenTelemetry standards for instrumentation. An example of auto-instrumentation for http requests (AddAspNetCoreInstrumentation) was added, as well as custom ones (e.g. SQS) when no automated solution available.
 
