@@ -3,7 +3,7 @@ version: "3.3"
 services:
 
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:0.12.9
     container_name: localstack
     environment:
       - SERVICES=sqs,dynamodb,iam,lambda,dynamodbstreams,cloudwatchlogs

@@ -4,13 +4,13 @@ services:
 
   zipkin:
     container_name: zipkin
-    image: openzipkin/zipkin-slim
+    image: openzipkin/zipkin-slim:2.23.16
     ports: 
       - 9411:9411
 
   jaeger:
     container_name: jaeger
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.31.0
     ports:
       - "16686:16686"
       - "14268"
@@ -18,7 +18,7 @@ services:
 
   prometheus:
     container_name: prometheus
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.33.4
     volumes:
       - ./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
     ports:
@@ -26,7 +26,7 @@ services:
 
   otel-collector:
     container_name: otel-collector
-    image: otel/opentelemetry-collector
+    image: otel/opentelemetry-collector:0.45.0
     command: ["--config=/etc/otel-collector-config.yaml", ""]
     volumes:
       - ./docker/otel-collector-config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
@@ -42,18 +42,18 @@ services:
   sample-api-one:
     environment:
       - Settings:DistributedTracingOptions:Exporter=OtlpCollector
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:55680
+      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:4317
       - Settings:DistributedTracingOptions:ZipkinEndpointUrl=
 
   sample-api-two:
     environment:
       - Settings:DistributedTracingOptions:Exporter=OtlpCollector
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:55680
+      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:4317
       - Settings:DistributedTracingOptions:ZipkinEndpointUrl=
 
   worker:
     environment:
       - Settings:DistributedTracingOptions:Exporter=OtlpCollector
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:55680
+      - Settings:DistributedTracingOptions:OtlpEndpointUrl=http://otel-collector:4317
       - Settings:DistributedTracingOptions:ZipkinEndpointUrl=
 

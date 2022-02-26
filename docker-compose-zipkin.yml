@@ -4,25 +4,24 @@ services:
 
   zipkin:
     container_name: zipkin
-    image: openzipkin/zipkin-slim
+    image: openzipkin/zipkin-slim:2.23.16
     ports: 
-      - 9411:9411
-     
+    - 9411:9411
+
   sample-api-one:
     environment:
-      - Settings:DistributedTracingOptions:Exporter=ZipKin
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=
-      - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
+    - Settings:DistributedTracingOptions:Exporter=ZipKin
+    - Settings:DistributedTracingOptions:OtlpEndpointUrl=
+    - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
 
   sample-api-two:
     environment:
-      - Settings:DistributedTracingOptions:Exporter=ZipKin
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=
-      - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
-	  
+    - Settings:DistributedTracingOptions:Exporter=ZipKin
+    - Settings:DistributedTracingOptions:OtlpEndpointUrl=
+    - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
+
   worker:
     environment:
-      - Settings:DistributedTracingOptions:Exporter=ZipKin
-      - Settings:DistributedTracingOptions:OtlpEndpointUrl=
-      - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
-
+    - Settings:DistributedTracingOptions:Exporter=ZipKin
+    - Settings:DistributedTracingOptions:OtlpEndpointUrl=
+    - Settings:DistributedTracingOptions:ZipkinEndpointUrl=http://zipkin:9411/api/v2/spans
