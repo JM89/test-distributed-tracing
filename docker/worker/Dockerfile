@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
 COPY ../../Shared/Shared.csproj ./
@@ -9,7 +9,7 @@ COPY ../../Shared ./
 COPY ../../Worker ./
 RUN dotnet publish Worker.csproj -c Release -o out 
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1
+FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "Worker.dll"]
