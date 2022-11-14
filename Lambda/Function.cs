@@ -34,7 +34,7 @@ namespace MyLambda
             _dynamoDbItemService = serviceProvider.GetRequiredService<IDynamoDbItemService>();
         }
 
-        public async Task FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
+        public async Task<string> FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
         {
             context.Logger.LogLine($"Beginning to process {dynamoEvent.Records.Count} records...");
 
@@ -44,6 +44,8 @@ namespace MyLambda
             }
 
             context.Logger.LogLine("Stream processing complete.");
+
+            return "Success";
         }
     }
 }
