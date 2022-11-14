@@ -1,7 +1,9 @@
 ﻿using Amazon.DynamoDBv2.Model;
-using Amazon.Lambda.Core;
 using Flurl.Http;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Context;
+using SerilogTimings;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -15,83 +17,93 @@ namespace MyLambda.Services
         private readonly JsonSerializer _jsonSerializer;
         private readonly Settings _settings;
         private readonly ActivitySource _activitySource;
+        private readonly ILogger _logger;
 
-        public DynamoDbItemService(Settings settings, ActivitySource activitySource)
+        public DynamoDbItemService(Settings settings, ActivitySource activitySource, ILogger logger)
         {
             _jsonSerializer = new JsonSerializer();
             _settings = settings;
             _activitySource = activitySource;
+            _logger = logger;
         }
 
-        public async Task<bool> DoSomethingAsync(DynamodbStreamRecord record, ILambdaLogger logger)
+        public async Task<bool> DoSomethingAsync(DynamodbStreamRecord record)
         {
             string ParentId = "", TraceId = "", TraceParentId = "";
 
-            logger.LogLine($"Event ID: {record.EventID}");
-            logger.LogLine($"Event Name: {record.EventName}");
-
-            using (var writer = new StringWriter())
+            using (LogContext.PushProperty("Event ID", record.EventID))
+            using (LogContext.PushProperty("Event Name", record.EventName))
             {
-                _jsonSerializer.Serialize(writer, record.Dynamodb);
-
-                var hasParentTrace = record.Dynamodb.NewImage.TryGetValue("ParentTraceId", out AttributeValue value);
-                if (hasParentTrace)
+                using (Operation.Time("Do something with dynamodb record"))
                 {
-                    logger.LogLine($"ParentTraceId: {value.S}");
-                    TraceParentId = value.S;
-                    var traceInfo = value.S.Split("-");
-                    if (traceInfo.Length == 4)
+                    using (var writer = new StringWriter())
                     {
-                        TraceId = traceInfo[1];
-                        ParentId = traceInfo[2];
+                        _jsonSerializer.Serialize(writer, record.Dynamodb);
+
+                        var hasParentTrace = record.Dynamodb.NewImage.TryGetValue("ParentTraceId", out AttributeValue value);
+                        if (hasParentTrace)
+                        {
+                            _logger.Information($"ParentTraceId found: {value.S}");
+
+                            TraceParentId = value.S;
+                            var traceInfo = value.S.Split("-");
+                            if (traceInfo.Length == 4)
+                            {
+                                TraceId = traceInfo[1];
+                                ParentId = traceInfo[2];
+                            }
+                        }
+
+                        var streamRecordJson = writer.ToString();
+                    }
+
+                    try
+                    {
+                        Activity activity = null;
+
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(TraceParentId))
+                            {
+                                activity = _activitySource.StartActivity("call-api", ActivityKind.Client,
+                                    TraceParentId, startTime: DateTimeOffset.UtcNow);
+                            }
+                            else
+                            {
+                                activity = _activitySource.StartActivity("call-api", ActivityKind.Client);
+                            }
+
+
+                            using (LogContext.PushProperty("Activity StartTimeUtc", activity?.StartTimeUtc))
+                            using (LogContext.PushProperty("OtlpEndpointUrl", _settings.DistributedTracingOptions.OtlpEndpointUrl))
+                            using (LogContext.PushProperty("TraceId", TraceId))
+                            using (LogContext.PushProperty("ParentId", ParentId))
+                            {
+                                _logger.Information("Trigger call to SampleApi.Two");
+                                using (Operation.Time("Call SampleApi.Two"))
+                                {
+                                    if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
+                                    {
+                                        var response = await _settings.SampleApiTwoTestEndpointUrl
+                                           .WithHeader("traceparent", activity.Id)
+                                           .GetStringAsync();
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                        finally
+                        {
+                            activity?.Stop();
+                            activity?.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex, "Error occured {message}", ex.Message);
+                        return false;
                     }
                 }
-
-                var streamRecordJson = writer.ToString();
-
-                logger.LogLine($"DynamoDB Record:");
-                logger.LogLine(streamRecordJson);
-            }
-
-            try
-            {
-                Activity activity = null;
-
-                try
-                { 
-                    if (!string.IsNullOrEmpty(TraceParentId))
-                    {
-                        activity = _activitySource.StartActivity("call-api", ActivityKind.Client,
-                            TraceParentId, startTime: DateTimeOffset.UtcNow);
-                    }
-                    else
-                    {
-                        activity = _activitySource.StartActivity("call-api", ActivityKind.Client);
-                    }
-
-                    logger.LogLine("Activity StartTimeUtc: " + activity?.StartTimeUtc);
-                    logger.LogLine("OtlpEndpointUrl: " + _settings.DistributedTracingOptions.OtlpEndpointUrl);
-
-                    if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
-                    {
-                        logger.LogLine("Calling SampleApi.Two");
-                        var response = await _settings.SampleApiTwoTestEndpointUrl
-                            .WithHeader("traceparent", activity.Id)
-                            .GetStringAsync();
-                        logger.LogLine($"SampleApi.Two called successfully: {response}");
-                    }
-                    return true;
-                }
-                finally
-                {
-                    activity?.Stop();
-                    activity?.Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogLine($"Error occured: {ex.Message}");
-                return false;
             }
         }
     }

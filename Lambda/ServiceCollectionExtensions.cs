@@ -17,8 +17,6 @@ namespace MyLambda
         {
             var settings = configuration.GetSection("Settings").Get<Settings>();
 
-            configuration.LogSettings("Settings");
-
             services.AddSingleton(settings);
             services.AddTransient<IDynamoDbItemService, DynamoDbItemService>();
 
