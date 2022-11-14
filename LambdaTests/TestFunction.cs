@@ -42,7 +42,9 @@ namespace MyLambdaTests
                 }
             };
             var function = new MyLambda.Function();
-            await function.FunctionHandler(dynamoDbEvent, _mockLambdaContext.Object);
+            var result = await function.FunctionHandler(dynamoDbEvent, _mockLambdaContext.Object);
+
+            Assert.Equal("Success", result);
         }
     }
 }

@@ -35,8 +35,7 @@ namespace MyLambda
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
                     .AddSource("Flurl.Instrumentation")
-                    .ConfigureExporter(settings.DistributedTracingOptions)
-                    .Build(); 
+                    .ConfigureExporter(settings.DistributedTracingOptions);
             });
             return services;
         }
