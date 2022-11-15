@@ -29,10 +29,11 @@ namespace SampleApi.One.Controllers
             _sqsClient = sqsClient;
             _activitySource = activitySource;
             _settings = settings;
+            _logger = logger;
         }
 
         /// <summary>
-        /// https://localhost:5001/api/test/test
+        /// /api/test/test
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
@@ -88,7 +89,7 @@ namespace SampleApi.One.Controllers
         }
 
         /// <summary>
-        /// https://localhost:5001/api/test/test-lambda
+        /// /api/test/test-lambda
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>

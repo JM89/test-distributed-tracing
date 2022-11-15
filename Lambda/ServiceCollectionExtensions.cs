@@ -27,14 +27,16 @@ namespace MyLambda
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddSingleton(new ActivitySource("Flurl.Instrumentation"));
+            services.AddSingleton(new ActivitySource(settings.ServiceName));
+
             services.AddOpenTelemetryTracing(builder =>
             {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddSource("Flurl.Instrumentation")
+                    .AddSource(settings.ServiceName)
                     .ConfigureExporter(settings.DistributedTracingOptions);
             });
+
             return services;
         }
     }

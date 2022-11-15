@@ -1,13 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
-COPY ../../Shared/Shared.csproj ./
-COPY ../../SampleApi.One/SampleApi.One.csproj ./
-RUN dotnet restore SampleApi.One.csproj
+COPY ../../SampleApi.One/SampleApi.One.csproj ./SampleApi.One/
+RUN dotnet restore ./SampleApi.One/SampleApi.One.csproj
 
-COPY ../../Shared ./
-COPY ../../SampleApi.One ./
-RUN dotnet publish SampleApi.One.csproj -c Release -o out 
+COPY ../../Shared ./Shared/
+COPY ../../Lambda ./Lambda/
+COPY ../../SampleApi.One ./SampleApi.One/
+RUN dotnet publish ./SampleApi.One/SampleApi.One.csproj -c Release -o out 
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
