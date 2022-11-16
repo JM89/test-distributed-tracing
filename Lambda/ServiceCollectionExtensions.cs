@@ -27,8 +27,6 @@ namespace MyLambda
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddSingleton(new ActivitySource(settings.ServiceName));
-
             services.AddOpenTelemetryTracing(builder =>
             {
                 builder

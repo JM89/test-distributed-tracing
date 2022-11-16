@@ -19,11 +19,11 @@ namespace MyLambda.Services
         private readonly ActivitySource _activitySource;
         private readonly ILogger _logger;
 
-        public DynamoDbItemService(Settings settings, ActivitySource activitySource, ILogger logger)
+        public DynamoDbItemService(Settings settings, ILogger logger)
         {
             _jsonSerializer = new JsonSerializer();
             _settings = settings;
-            _activitySource = activitySource;
+            _activitySource = new ActivitySource("Flurl.Instrumentation");
             _logger = logger;
         }
 

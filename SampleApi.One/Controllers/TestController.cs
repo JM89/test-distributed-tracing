@@ -44,12 +44,12 @@ namespace SampleApi.One.Controllers
             {
                 if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
                 {
-                    Console.WriteLine("Calling SampleApi.Two");
+                    _logger.Information("Calling SampleApi.Two");
                     var response = await _settings
                         .SampleApiTwoTestEndpointUrl
                         .WithHeader("traceparent", Activity.Current?.Id)
                         .GetStringAsync();
-                    Console.WriteLine($"SampleApi.Two called successfully: {response}");
+                    _logger.Information($"SampleApi.Two called successfully: {response}");
                 }
 
             }
