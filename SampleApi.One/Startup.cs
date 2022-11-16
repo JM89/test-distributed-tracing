@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 
 namespace SampleApi.One
@@ -14,11 +15,16 @@ namespace SampleApi.One
         {
             Console.WriteLine("Starting API");
             _configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.RegisterAppServices(_configuration);
+            services.AddSingleton(Log.Logger);
             services.AddControllers();
         }
 

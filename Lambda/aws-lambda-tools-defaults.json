@@ -4,7 +4,7 @@
   "configuration": "Release",
   "framework": "netcoreapp3.1",
   "function-name": "streamer-lambda",
-  "function-runtime": "dotnetcore3.1",
+  "function-runtime": "dotnet6",
   "function-memory-size": 256,
   "function-timeout": 30,
   "function-handler": "MyLambda::MyLambda.Function::FunctionHandler"

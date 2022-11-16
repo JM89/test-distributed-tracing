@@ -17,8 +17,6 @@ namespace MyLambda
         {
             var settings = configuration.GetSection("Settings").Get<Settings>();
 
-            configuration.LogSettings("Settings");
-
             services.AddSingleton(settings);
             services.AddTransient<IDynamoDbItemService, DynamoDbItemService>();
 
@@ -29,14 +27,14 @@ namespace MyLambda
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddSingleton(new ActivitySource("Flurl.Instrumentation"));
             services.AddOpenTelemetryTracing(builder =>
             {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddSource("Flurl.Instrumentation")
+                    .AddSource(settings.ServiceName)
                     .ConfigureExporter(settings.DistributedTracingOptions);
             });
+
             return services;
         }
     }

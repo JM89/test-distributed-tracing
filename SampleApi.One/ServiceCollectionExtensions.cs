@@ -39,6 +39,8 @@ namespace SampleApi.One
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
                     .AddAspNetCoreInstrumentation()
                     .AddSource("Sqs.Instrumentation")
+                    .AddSource("Flurl.Instrumentation")
+                    .AddSource(settings.ServiceName)
                     .ConfigureExporter(settings.DistributedTracingOptions);
             });
             return services;
