@@ -21,6 +21,7 @@ resource "aws_dynamodb_table" "sample_table" {
 
 resource "aws_iam_role" "streamer_lambda_role" {
   count              = var.create_resources ? 1 : 0
+  name               = "streamer-lambda-role"
   assume_role_policy = data.aws_iam_policy_document.streamer_lambda_role_trust_policy[0].json
   tags               = local.default_tags
 }
@@ -36,11 +37,9 @@ data "aws_iam_policy_document" "streamer_lambda_role_trust_policy" {
   }
 }
 
-resource "aws_iam_policy" "stream_lambda_role_policy" {
-  count  = var.create_resources ? 1 : 0
-  name   = "streamer-lambda-role-policy"
+resource "aws_iam_role_policy" "stream_lambda_role_policy" {
   policy = data.aws_iam_policy_document.stream_lambda_role_policy[0].json
-  tags   = local.default_tags
+  role   = aws_iam_role.streamer_lambda_role[0].id
 }
 
 data "aws_iam_policy_document" "stream_lambda_role_policy" {
@@ -73,11 +72,10 @@ resource "aws_lambda_function" "streamer_lambda" {
   function_name    = "streamer-lambda"
   handler          = "MyLambda::MyLambda.Function::FunctionHandler"
   role             = aws_iam_role.streamer_lambda_role[0].arn
-  runtime          = "dotnetcore3.1"
-  filename         = "./resources/Lambda.zip"
-  source_code_hash = filebase64sha256("./resources/Lambda.zip")
+  runtime          = "dotnet6"
+  filename         = "./resources/MyLambda.zip"
+  source_code_hash = filebase64sha256("./resources/MyLambda.zip")
   tags             = local.default_tags
-
   environment {
     variables = {
       "Settings__DistributedTracingOptions__Exporter" : "OtlpCollector",
@@ -88,10 +86,21 @@ resource "aws_lambda_function" "streamer_lambda" {
   }
 }
 
+resource "aws_sqs_queue" "streamer_lambda_dlq" {
+  count = var.create_resources ? 1 : 0
+  name  = "streamer-lambda-dlq"
+  tags  = local.default_tags
+}
+
 resource "aws_lambda_event_source_mapping" "streamer_lambda_event_source" {
   count             = var.create_resources ? 1 : 0
   function_name     = aws_lambda_function.streamer_lambda[0].function_name
   event_source_arn  = aws_dynamodb_table.sample_table[0].stream_arn
   batch_size        = 1
   starting_position = "TRIM_HORIZON"
+  destination_config {
+    on_failure {
+      destination_arn = aws_sqs_queue.streamer_lambda_dlq[0].arn
+    }
+  }
 }
