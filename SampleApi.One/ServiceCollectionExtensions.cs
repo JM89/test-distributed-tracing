@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Shared;
-using System;
 using System.Diagnostics;
 
 namespace SampleApi.One
@@ -19,12 +18,14 @@ namespace SampleApi.One
 
             services.AddSingleton(settings);
 
-            services.AddSingleton<IAmazonSQS>(
-                new AmazonSQSClient(
-                    new AmazonSQSConfig()
-                    {
-                        ServiceURL = settings.AwsServiceUrl
-                    }));
+            var sqsConfig = new AmazonSQSConfig();
+            if (!string.IsNullOrEmpty(settings.AwsServiceUrl))
+            {
+                sqsConfig.ServiceURL = settings.AwsServiceUrl;
+                sqsConfig.AuthenticationRegion = settings.Region;
+            }
+
+            services.AddSingleton<IAmazonSQS>(new AmazonSQSClient(sqsConfig));
 
             services.RegisterOpenTelemetry(settings);
 

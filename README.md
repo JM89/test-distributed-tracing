@@ -29,7 +29,7 @@ Using Zipkin, we push traces directly to the Zipkin server (docker container her
 To get started, run the following command:
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose-zipkin.yml up --build
+docker-compose -f docker-compose.yml -f docker-compose-infra.yml -f docker-compose-zipkin.yml up --build
 ```
 
 Once everything is up and running, call the following api endpoint to trigger a test: `http://localhost:5123/api/test/test`. 
@@ -49,7 +49,7 @@ Using an OTLP collector, we push traces directly to the collector node (docker c
 To get started, run the following command:
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose-otel-collector.yml up --build
+docker-compose -f docker-compose.yml -f docker-compose-infra.yml -f docker-compose-otel-collector.yml up --build
 ```
 
 Once everything is up and running, call the following api endpoint to trigger a test: `http://localhost:5123/api/test/test`. 

@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using Amazon;
+using Amazon.DynamoDBv2;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
@@ -19,12 +20,13 @@ namespace SampleApi.Two
 
             services.AddSingleton(settings);
 
-            services.AddSingleton<IAmazonDynamoDB>(
-                new AmazonDynamoDBClient(
-                    new AmazonDynamoDBConfig()
-                    {
-                        ServiceURL = settings.AwsServiceUrl
-                    }));
+            var dynamoDbConfig = new AmazonDynamoDBConfig();
+            if (!string.IsNullOrEmpty(settings.AwsServiceUrl))
+            {
+                dynamoDbConfig.ServiceURL = settings.AwsServiceUrl;
+                dynamoDbConfig.AuthenticationRegion = settings.Region;
+            }
+            services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(dynamoDbConfig));
 
             services.RegisterOpenTelemetry(settings);
 
