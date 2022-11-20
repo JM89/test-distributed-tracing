@@ -10,6 +10,8 @@ namespace SampleApi.Two
 
         public string TableName { get; set; }
 
+        public string Region { get; set; }
+
         public DistributedTracingOptions DistributedTracingOptions { get; set; }
     }
 }
