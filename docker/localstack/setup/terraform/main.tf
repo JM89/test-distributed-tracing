@@ -77,6 +77,15 @@ resource "aws_lambda_function" "streamer_lambda" {
   filename         = "./resources/Lambda.zip"
   source_code_hash = filebase64sha256("./resources/Lambda.zip")
   tags             = local.default_tags
+
+  environment {
+    variables = {
+      "Settings__DistributedTracingOptions__Exporter" : "OtlpCollector",
+      "Settings__DistributedTracingOptions__OtlpEndpointUrl" : "http://host.docker.internal:55680",
+      "Settings__SampleApiTwoTestEndpointUrl" : "http://host.docker.internal:5124/api/test/test2",
+      "Serilog__WriteTo__1__Args__serverUrl" : "http://host.docker.internal:5341"
+    }
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "streamer_lambda_event_source" {

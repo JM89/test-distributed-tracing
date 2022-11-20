@@ -20,11 +20,14 @@ namespace Worker
 
             services.AddSingleton(settings);
 
-            services.AddSingleton<IAmazonSQS>(
-                new AmazonSQSClient(
-                    new AmazonSQSConfig() {
-                    ServiceURL = settings.AwsServiceUrl
-                }));
+            var sqsConfig = new AmazonSQSConfig();
+            if (!string.IsNullOrEmpty(settings.AwsServiceUrl))
+            {
+                sqsConfig.ServiceURL = settings.AwsServiceUrl;
+                sqsConfig.AuthenticationRegion = settings.Region;
+            }
+
+            services.AddSingleton<IAmazonSQS>(new AmazonSQSClient(sqsConfig));
 
             services.AddSingleton<ISqsMessageHandler, SqsMessageHandler>();
 

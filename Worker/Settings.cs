@@ -10,6 +10,8 @@ namespace Worker
 
         public string QueueName { get; set; }
 
+        public string Region { get; set; }
+
         public DistributedTracingOptions DistributedTracingOptions { get; set; }
     }
 }
