@@ -72,7 +72,7 @@ A similar traces will appear in Zipkin and here the same trace on Jaeger.
 
 There are a few step to refresh the function once modified described below: 
 
-Go to the Lambda folder then run:
+Go to the MyLambda folder then run:
 ```
 sh deploy_function.sh
 ```
