@@ -5,7 +5,7 @@ COPY ../../SampleApi.One/SampleApi.One.csproj ./SampleApi.One/
 RUN dotnet restore ./SampleApi.One/SampleApi.One.csproj
 
 COPY ../../Shared ./Shared/
-COPY ../../Lambda ./Lambda/
+COPY ../../MyLambda ./MyLambda/
 COPY ../../SampleApi.One ./SampleApi.One/
 RUN dotnet publish ./SampleApi.One/SampleApi.One.csproj -c Release -o out 
 
