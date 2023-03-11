@@ -1,16 +1,12 @@
 name: OpenTelemetry upgrade
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-  #  types: [opened]
-  workflow_dispatch:
+    types: [opened, reopened]
 
 env:
   PR_TITLE_FILTER: 'Bump OpenTelemetry from'
-  BRANCH_NAME_FILTER: 'task/opentelemetry-lib-update'
+  BRANCH_NAME_FILTER: 'dependabot'
 
 jobs:
   detect-opentelemetry-upgrades:
@@ -46,26 +42,25 @@ jobs:
       - name: Force all ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_library }} libraries on all projects
         run: |
             echo Upgrade to OpenTelemetry ${{ env.opentelemetry_version }}
-            #dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
-            #dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
-            #dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            #dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
-            #dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Shared/Shared.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Worker/Worker.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
-            #dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            dotnet add ./Worker/Worker.csproj package Flurl --version 3.0.7
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
       - name: Commit changes to PR
         uses: stefanzweifel/git-auto-commit-action@v4.16.0
         with:
