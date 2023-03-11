@@ -19,10 +19,10 @@ jobs:
         run: echo The Title of your PR is ${{ github.event.pull_request.title }}
       - name: Check if PR is bump OpenTelemetry
         if: startsWith(${{ github.event.pull_request.title }}, ${{ env.FILTER }})
-        run: Title is bump open telemetry
+        run: echo TTitle is bump open telemetry
       - name: Check if PR is bump OpenTelemetry
         if: startsWith(${{ github.event.pull_request.title }}, 'helloworld')
-        run: Title is not helloworld
+        run: echo TTitle is not helloworld
       - name: Print branch name
         run: echo The branch name ${{ github.ref }}
       
