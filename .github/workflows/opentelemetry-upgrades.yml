@@ -45,10 +45,25 @@ jobs:
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
-      - uses: stefanzweifel/git-auto-commit-action@v4.16.0
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Api --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Console --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Api --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Console --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./SampleApi.Two/SampleApi.Two.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Shared/Shared.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Api --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Console --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./Worker/Worker.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+      - name: Commit changes to PR
+        uses: stefanzweifel/git-auto-commit-action@v4.16.0
         with:
             commit_message: Fix all CSPROJ projects
-            commit_user_name: JM89
 
       #- name: Check if PR is not hellowolrd
       #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
