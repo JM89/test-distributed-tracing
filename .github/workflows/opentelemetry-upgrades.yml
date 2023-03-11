@@ -24,8 +24,8 @@ jobs:
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
             ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
         run: | 
-            echo Dependabots Bump OpenTelemetry detected 
-            echo "opentelemetry_version=${{ github.event.pull_request.title }} | sed 's/.* //'" >> "$GITHUB_OUTPUT"
+            echo "opentelemetry_version=$(${{ github.event.pull_request.title }} | sed 's/.* //'") >> "$GITHUB_OUTPUT"
+            echo "Dependabots Bump OpenTelemetry to $opentelemetry_version detected"
 
   fix-opentelemetry-dependencies: 
     runs-on: ubuntu-latest
