@@ -16,6 +16,7 @@ jobs:
     outputs:
       status: ${{ steps.check.conclusion }}
       opentelemetry_version: ${{ steps.check.outputs.opentelemetry_version }}
+      opentelemetry_library: ${{ steps.check.outputs.opentelemetry_library }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,26 +26,25 @@ jobs:
             ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
         run: | 
             echo "opentelemetry_version=$(echo '${{ github.event.pull_request.title }}' | sed 's/.* //')" >> "$GITHUB_OUTPUT"
+            echo "opentelemetry_library=$(echo '${{ github.event.pull_request.title }}' | sed 's/.*Bump //' | cut -f1 -d' ')" >> "$GITHUB_OUTPUT"
             echo "Dependabots Bump OpenTelemetry detected"
 
   fix-opentelemetry-dependencies: 
     runs-on: ubuntu-latest
     needs: detect-opentelemetry-upgrades
     if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
-    env:
-        opentelemetry_version=${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
     steps:
       - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_ENV }}
-      - name: Force all OpenTelemetry libraries on all projects
+      - name: Force all ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_library }} libraries on all projects
         run: |
-            echo Upgrade to OpenTelemetry ${{ env.opentelemetry_version }}
-            dotnet add package OpenTelemetry --version ${{ env.opentelemetry_version }}
-            dotnet add package OpenTelemetry.Exporter.Console --version ${{ env.opentelemetry_version }}
-            dotnet add package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
-            dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
+            echo Upgrade to OpenTelemetry ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add package OpenTelemetry --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add package OpenTelemetry.Exporter.Console --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
 
       #- name: Check if PR is not hellowolrd
       #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
