@@ -20,9 +20,12 @@ jobs:
       - name: Check if PR is bump OpenTelemetry
         if: startsWith(${{ github.event.pull_request.title }}, ${{ env.FILTER }})
         run: echo TTitle is bump open telemetry
-      - name: Check if PR is bump OpenTelemetry
+      - name: Check if PR is not hellowolrd
         if: startsWith(${{ github.event.pull_request.title }}, 'helloworld')
         run: echo TTitle is not helloworld
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Print branch name
-        run: echo The branch name ${{ github.ref }}
-      
+        run: echo The branch name ${{ steps.extract_branch.outputs.branch }}
