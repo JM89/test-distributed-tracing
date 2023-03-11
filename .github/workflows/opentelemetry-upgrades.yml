@@ -24,18 +24,21 @@ jobs:
         id: check
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
             ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
-        run: echo Dependabots Bump OpenTelemetry detected 
-  fix-opentelemetry-dependencies: 
-    runs-on: ubuntu-latest
-    needs: detect-opentelemetry-upgrades
-    if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
-    steps:
-      - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ env.DOTNET_ENV }}
-      - name: Force all OpenTelemetry libraries on all projects
-        run: echo Dependabots Bump OpenTelemetry detected 
+        run: | 
+            echo Dependabots Bump OpenTelemetry detected 
+            echo ${{ github.event.pull_request.title }} | sed 's/.* //' 
+
+  #fix-opentelemetry-dependencies: 
+  #  runs-on: ubuntu-latest
+  #  needs: detect-opentelemetry-upgrades
+  #  if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
+  #  steps:
+  #    - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
+  #      uses: actions/setup-dotnet@v3
+  #      with:
+  #        dotnet-version: ${{ env.DOTNET_ENV }}
+  #    - name: Force all OpenTelemetry libraries on all projects
+  #      run: echo Dependabots Bump OpenTelemetry detected 
 
       #- name: Check if PR is not hellowolrd
       #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
