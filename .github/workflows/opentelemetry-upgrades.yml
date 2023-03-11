@@ -14,7 +14,7 @@ env:
 jobs:
   detect-opentelemetry-upgrades:
     outputs:
-        status: ${{ steps.check.conclusion }}
+      status: ${{ steps.check.conclusion }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
         id: check
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
             ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
-        run: exit_with_success
+        run: echo Dependabots Bump OpenTelemetry detected 
   fix-opentelemetry-dependencies: 
     runs-on: ubuntu-latest
     needs: detect-opentelemetry-upgrades
