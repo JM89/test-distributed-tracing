@@ -15,30 +15,29 @@ jobs:
   detect-opentelemetry-upgrades:
     outputs:
       status: ${{ steps.check.conclusion }}
+      opentelemetry_version: ${{ steps.check.outputs.opentelemetry_version }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      #- name: Print title of PR
-      #  run: echo The Title of your PR is ${{ github.event.pull_request.title }}
       - name: Dependabots Bump OpenTelemetry detected 
         id: check
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
             ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
         run: | 
             echo Dependabots Bump OpenTelemetry detected 
-            echo ${{ github.event.pull_request.title }} | sed 's/.* //' 
+            echo "opentelemetry_version=${{ github.event.pull_request.title }} | sed 's/.* //'" >> "$GITHUB_OUTPUT"
 
-  #fix-opentelemetry-dependencies: 
-  #  runs-on: ubuntu-latest
-  #  needs: detect-opentelemetry-upgrades
-  #  if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
-  #  steps:
-  #    - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
-  #      uses: actions/setup-dotnet@v3
-  #      with:
-  #        dotnet-version: ${{ env.DOTNET_ENV }}
-  #    - name: Force all OpenTelemetry libraries on all projects
-  #      run: echo Dependabots Bump OpenTelemetry detected 
+  fix-opentelemetry-dependencies: 
+    runs-on: ubuntu-latest
+    needs: detect-opentelemetry-upgrades
+    if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
+    steps:
+      #- name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
+      #  uses: actions/setup-dotnet@v3
+      #  with:
+      #    dotnet-version: ${{ env.DOTNET_ENV }}
+      - name: Force all OpenTelemetry libraries on all projects
+        run: echo Upgrade to ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
 
       #- name: Check if PR is not hellowolrd
       #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
