@@ -48,6 +48,7 @@ jobs:
         run: |
             echo Upgrade to OpenTelemetry ${{ env.opentelemetry_version }}
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ env.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ env.opentelemetry_version }}
             dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ env.opentelemetry_version }}
             dotnet add ./SampleApi.One/SampleApi.One.csproj package OpenTelemetry.Api --version ${{ env.opentelemetry_version }}
