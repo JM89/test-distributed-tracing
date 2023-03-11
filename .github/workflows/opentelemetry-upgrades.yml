@@ -42,9 +42,9 @@ jobs:
       - name: Force all ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_library }} libraries on all projects
         run: |
             echo Upgrade to OpenTelemetry ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
-            dotnet add MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
-            dotnet add MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
-            dotnet add MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.Zipkin --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
+            dotnet add ./MyLambda/MyLambda.csproj package OpenTelemetry.Exporter.OpenTelemetryProtocol --version ${{ needs.detect-opentelemetry-upgrades.outputs.opentelemetry_version }}
 
       #- name: Check if PR is not hellowolrd
       #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
