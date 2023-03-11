@@ -23,13 +23,8 @@ jobs:
       - name: Check if PR is not hellowolrd
         if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
         run: echo Title is not helloworld
-      - name: Extract branch name
-        shell: bash
-        run: |
-            echo "${GITHUB_REF}" 
-            echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Print branch name
-        run: echo The branch name ${{ env.branch }}
+        run: echo The branch name ${{ github.event.pull_request.head.ref }}
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
