@@ -19,7 +19,6 @@ jobs:
       opentelemetry_library: ${{ steps.check.outputs.opentelemetry_library }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Dependabots Bump OpenTelemetry detected 
         id: check
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
@@ -34,6 +33,7 @@ jobs:
     needs: detect-opentelemetry-upgrades
     if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
     steps:
+      - uses: actions/checkout@v3
       - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
         uses: actions/setup-dotnet@v3
         with:
