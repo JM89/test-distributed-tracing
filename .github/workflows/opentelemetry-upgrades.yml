@@ -30,3 +30,7 @@ jobs:
             echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Print branch name
         run: echo The branch name ${{ env.branch }}
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
