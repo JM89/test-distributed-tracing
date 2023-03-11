@@ -25,6 +25,8 @@ jobs:
         run: echo Title is not helloworld
       - name: Extract branch name
         shell: bash
-        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: |
+            echo "${GITHUB_REF}" 
+            echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Print branch name
         run: echo The branch name ${{ env.branch }}
