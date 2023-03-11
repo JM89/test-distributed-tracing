@@ -16,23 +16,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Print title of PR
-        run: echo The Title of your PR is ${{ github.event.pull_request.title }}
-      - name: Check if PR is bump OpenTelemetry
-        if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} 
-        run: echo TTitle is bump open telemetry
-      - name: Check if PR is not hellowolrd
-        if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
-        run: echo Title is not helloworld
-      - name: Print branch name
-        run: echo The branch name ${{ github.event.pull_request.head.ref }}
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Check if branch is dependabots
-        if: ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
-        run: echo branch is dependabots
-      - name: Check if PR is not hellowolrd
-        if: ${{ startsWith(github.event.pull_request.head.ref, 'helloworld') }} 
-        run: echo branch is not helloworld
+      #- name: Print title of PR
+      #  run: echo The Title of your PR is ${{ github.event.pull_request.title }}
+      - name: Dependabots Bump OpenTelemetry detected 
+        if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
+            ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
+        run: echo Dependabots Bump OpenTelemetry detected 
+      #- name: Check if PR is not hellowolrd
+      #  if: ${{ startsWith(github.event.pull_request.title, 'helloworld') }} 
+      #  run: echo Title is not helloworld
+      #- name: Print branch name
+      #  run: echo The branch name ${{ github.event.pull_request.head.ref }}
+      #- name: Dump GitHub context
+      #  env:
+      #    GITHUB_CONTEXT: ${{ toJson(github) }}
+      #  run: echo "$GITHUB_CONTEXT"
+      #- name: Check if branch is dependabots
+      #  if: ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
+      #  run: echo branch is dependabots
+      #- name: Check if PR is not hellowolrd
+      #  if: ${{ startsWith(github.event.pull_request.head.ref, 'helloworld') }} 
+      #  run: echo branch is not helloworld
