@@ -49,6 +49,13 @@ jobs:
         with:
           workflow: Solution build
           ref: ${{ github.event.pull_request.head.ref }}
+      - name: Force PR check
+        uses: LouisBrunner/checks-action@v1.3.1
+        with:
+            sha: ${{ github.sha }}
+            token: ${{ github.token }}
+            name: Solution build
+            status: in_progress
 
   #detect-opentelemetry-upgrades:
   #  outputs:
