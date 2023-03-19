@@ -79,7 +79,7 @@ resource "aws_lambda_function" "streamer_lambda" {
   environment {
     variables = {
       "Settings__DistributedTracingOptions__Exporter" : "OtlpCollector",
-      "Settings__DistributedTracingOptions__OtlpEndpointUrl" : "http://host.docker.internal:55680",
+      "Settings__DistributedTracingOptions__OtlpEndpointUrl" : "http://host.docker.internal:4318",
       "Settings__SampleApiTwoTestEndpointUrl" : "http://host.docker.internal:5124/api/test/test2",
       "Serilog__WriteTo__1__Args__serverUrl" : "http://host.docker.internal:5341"
     }

@@ -26,6 +26,7 @@ public class Function
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
+            .Enrich.FromLogContext()
             .CreateLogger();
 
         configuration.LogSettings("Settings");
@@ -39,6 +40,26 @@ public class Function
         _dynamoDbItemService = serviceProvider.GetRequiredService<IDynamoDbItemService>();
     }
 
+    public Function(ILogger logger)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        Log.Logger = logger;
+
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddSingleton(Log.Logger);
+        serviceCollection.RegisterAppServices(configuration);
+
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+       
+        _dynamoDbItemService = serviceProvider.GetRequiredService<IDynamoDbItemService>();
+    } 
+
     public async Task<string> FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
     {
         Log.Logger.Information($"Beginning to process {dynamoEvent.Records.Count} records...");
@@ -49,6 +70,7 @@ public class Function
         }
 
         Log.Logger.Information("Stream processing complete.");
+        Log.CloseAndFlush();
 
         return "Success";
     }

@@ -1,13 +1,9 @@
-﻿using Amazon.DynamoDBv2.Model;
-using Flurl.Http;
+﻿using Flurl.Http;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Context;
 using SerilogTimings;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 using static Amazon.Lambda.DynamoDBEvents.DynamoDBEvent;
 
 namespace MyLambda.Services
@@ -17,14 +13,12 @@ namespace MyLambda.Services
         private readonly JsonSerializer _jsonSerializer;
         private readonly Settings _settings;
         private readonly ActivitySource _activitySource;
-        private readonly ILogger _logger;
 
-        public DynamoDbItemService(Settings settings, ILogger logger)
+        public DynamoDbItemService(Settings settings)
         {
             _jsonSerializer = new JsonSerializer();
             _settings = settings;
             _activitySource = new ActivitySource("Flurl.Instrumentation");
-            _logger = logger;
         }
 
         public async Task<bool> DoSomethingAsync(DynamodbStreamRecord record)
@@ -43,7 +37,7 @@ namespace MyLambda.Services
                         var hasParentTrace = record.Dynamodb.NewImage.TryGetValue("ParentTraceId", value: out var value);
                         if (hasParentTrace && value != null)
                         {
-                            _logger.Information($"ParentTraceId found: {value.S}");
+                            Log.Logger.Information($"ParentTraceId found: {value.S}");
 
                             TraceParentId = value.S;
                             var traceInfo = value.S.Split("-");
@@ -79,7 +73,7 @@ namespace MyLambda.Services
                             using (LogContext.PushProperty("TraceId", TraceId))
                             using (LogContext.PushProperty("ParentId", ParentId))
                             {
-                                _logger.Information("Trigger call to SampleApi.Two");
+                                Log.Logger.Information("Trigger call to SampleApi.Two");
                                 using (Operation.Time("Call SampleApi.Two"))
                                 {
                                     if (!string.IsNullOrEmpty(_settings.SampleApiTwoTestEndpointUrl))
@@ -100,7 +94,7 @@ namespace MyLambda.Services
                     }
                     catch (Exception ex)
                     {
-                        _logger.Error(ex, "Error occured {message}", ex.Message);
+                        Log.Logger.Error(ex, "Error occured {message}", ex.Message);
                         return false;
                     }
                 }

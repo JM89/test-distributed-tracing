@@ -80,9 +80,15 @@ sh deploy_function.sh
 To check the CW Logs:
 
 ```
-aws logs filter-log-events --log-group "/aws/lambda/streamer-lambda" --endpoint-url http://localhost:4566 --region eu-west-2
+aws logs filter-log-events --log-group-name "/aws/lambda/streamer-lambda" --endpoint-url http://localhost:4566 --region eu-west-2
 
 aws logs get-log-events --log-group "/aws/lambda/streamer-lambda" --log-stream-name "<stream-name>" --endpoint-url http://localhost:4566 --region eu-west-2
 ```
 
 eg. "logStreamName": "2021/04/11/[LATEST]84b11d1c"
+
+Reconfigure the lambda:
+
+```
+aws lambda update-function-configuration --function-name streamer-lambda --environment "Variables={Settings__DistributedTracingOptions__Exporter=OtlpCollector,Settings__DistributedTracingOptions__OtlpEndpointUrl=http://host.docker.internal:4318, Settings__SampleApiTwoTestEndpointUrl=http://host.docker.internal:5124/api/test/test2, Serilog__WriteTo__1__Args__serverUrl=http://host.docker.internal:5341}" --endpoint-url http://localhost:4566 --region eu-west-2 
+```
