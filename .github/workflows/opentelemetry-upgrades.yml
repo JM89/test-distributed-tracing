@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set default vars
-       if: ${{ !startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }}
+        if: ${{ !startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }}
         run: | 
           echo "need_fix=false" >> "$GITHUB_OUTPUT"
           echo "Dependabots Bump OpenTelemetry not detected"
