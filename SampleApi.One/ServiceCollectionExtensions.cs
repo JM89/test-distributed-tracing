@@ -35,15 +35,16 @@ namespace SampleApi.One
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
             services.AddSingleton(new ActivitySource("Sqs.Instrumentation"));
-            services.AddOpenTelemetryTracing(builder => {
-                builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddAspNetCoreInstrumentation()
-                    .AddSource("Sqs.Instrumentation")
-                    .AddSource("Flurl.Instrumentation")
-                    .AddSource(settings.ServiceName)
-                    .ConfigureExporter(settings.DistributedTracingOptions);
-            });
+            services.AddOpenTelemetry()
+                .WithTracing(builder => {
+                    builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
+                        .AddAspNetCoreInstrumentation()
+                        .AddSource("Sqs.Instrumentation")
+                        .AddSource("Flurl.Instrumentation")
+                        .AddSource(settings.ServiceName)
+                        .ConfigureExporter(settings.DistributedTracingOptions);
+                });
             return services;
         }
     }
