@@ -2,7 +2,7 @@ name: OpenTelemetry upgrade
 
 on:
   pull_request:
-    #types: [opened, reopened]
+    types: [opened, reopened]
   workflow_dispatch:
 
 env:
