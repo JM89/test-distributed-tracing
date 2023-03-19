@@ -1,4 +1,4 @@
-# Distributed Tracing Instrumentation Playground
+# Distributed Tracing Instrumentation Playground 2
 
 This solution contains a set of C# services and AWS resources (run in localstack) to explore distributed tracing (intrumentation and visualization) with a concrete example that uses both async and sync communication. 
 
