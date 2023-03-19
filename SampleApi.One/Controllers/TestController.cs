@@ -117,7 +117,7 @@ namespace SampleApi.One.Controllers
                 }
                 };
 
-                var function = new MyLambda.Function(_logger);
+                var function = new MyLambda.Function();
 
                 var result = await function.FunctionHandler(dynamoDbEvent, new LambdaContextStub());
             }
