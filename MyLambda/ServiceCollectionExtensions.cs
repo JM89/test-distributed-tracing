@@ -27,13 +27,14 @@ namespace MyLambda
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddSource(settings.ServiceName)
-                    .ConfigureExporter(settings.DistributedTracingOptions);
-            });
+            services.AddOpenTelemetry()
+                .WithTracing(builder =>
+                {
+                    builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
+                        .AddSource(settings.ServiceName)
+                        .ConfigureExporter(settings.DistributedTracingOptions);
+                });
 
             return services;
         }

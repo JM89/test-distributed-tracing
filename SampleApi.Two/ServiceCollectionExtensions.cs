@@ -35,38 +35,39 @@ namespace SampleApi.Two
 
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation(opt =>
-                    {
-                        opt.Filter = (httpRequestMessage) =>
+            services.AddOpenTelemetry()
+                .WithTracing(builder =>
+                {
+                    builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation(opt =>
                         {
-                            return httpRequestMessage.Headers.Contains("X-Amz-Target");
-                        };
+                            opt.Filter = (httpRequestMessage) =>
+                            {
+                                return httpRequestMessage.Headers.Contains("X-Amz-Target");
+                            };
 
-                        opt.Enrich = (activity, eventName, rawObject) =>
-                        {
-                            if (eventName.Equals("OnStartActivity"))
+                            opt.Enrich = (activity, eventName, rawObject) =>
                             {
-                                if (rawObject is HttpRequestMessage request && request.Headers.Contains("X-Amz-Target"))
+                                if (eventName.Equals("OnStartActivity"))
                                 {
-                                    activity.AddDynamoDbTags(settings.TableName, string.Join(",", request.Headers.GetValues("X-Amz-Target")));
+                                    if (rawObject is HttpRequestMessage request && request.Headers.Contains("X-Amz-Target"))
+                                    {
+                                        activity.AddDynamoDbTags(settings.TableName, string.Join(",", request.Headers.GetValues("X-Amz-Target")));
+                                    }
                                 }
-                            }
-                            else if (eventName.Equals("OnException"))
-                            {
-                                if (rawObject is Exception exception)
+                                else if (eventName.Equals("OnException"))
                                 {
-                                    activity.SetTag("stackTrace", exception.StackTrace);
+                                    if (rawObject is Exception exception)
+                                    {
+                                        activity.SetTag("stackTrace", exception.StackTrace);
+                                    }
                                 }
-                            }
-                        };
-                    })
-                    .ConfigureExporter(settings.DistributedTracingOptions);
-            });
+                            };
+                        })
+                        .ConfigureExporter(settings.DistributedTracingOptions);
+                });
             return services;
         }
     }

@@ -39,13 +39,14 @@ namespace Worker
         public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection services, Settings settings)
         {
             services.AddSingleton(new ActivitySource("Sqs.Instrumentation"));
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
-                    .AddSource("Sqs.Instrumentation")
-                    .ConfigureExporter(settings.DistributedTracingOptions);
-            });
+            services.AddOpenTelemetry()
+                .WithTracing(builder =>
+                {
+                    builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(settings.ServiceName))
+                        .AddSource("Sqs.Instrumentation")
+                        .ConfigureExporter(settings.DistributedTracingOptions);
+                });
             return services;
         }
     }
