@@ -7,7 +7,6 @@ on:
 
 env:
   PR_TITLE_FILTER: 'Bump OpenTelemetry from'
-  BRANCH_NAME_FILTER: 'dependabot'
 
 jobs:
   detect-opentelemetry-upgrades:
@@ -18,12 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set default vars
+       if: ${{ !startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }}
         run: | 
           echo "need_fix=false" >> "$GITHUB_OUTPUT"
+          echo "Dependabots Bump OpenTelemetry not detected"
       - name: Dependabots Bump OpenTelemetry detected 
         id: check
-        if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
-            ${{ startsWith(github.event.pull_request.head.ref, env.BRANCH_NAME_FILTER) }} 
+        if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} 
         run: | 
             echo "opentelemetry_version=$(echo '${{ github.event.pull_request.title }}' | sed 's/.* //')" >> "$GITHUB_OUTPUT"
             echo "opentelemetry_library=$(echo '${{ github.event.pull_request.title }}' | sed 's/.*Bump //' | cut -f1 -d' ')" >> "$GITHUB_OUTPUT"
