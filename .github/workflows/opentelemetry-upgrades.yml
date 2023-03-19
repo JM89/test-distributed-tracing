@@ -2,7 +2,7 @@ name: OpenTelemetry upgrade
 
 on:
   pull_request:
-    types: [opened, reopened]
+    #types: [opened, reopened]
   workflow_dispatch:
 
 env:
@@ -12,11 +12,14 @@ env:
 jobs:
   detect-opentelemetry-upgrades:
     outputs:
-      status: ${{ steps.check.conclusion }}
+      need_fix: ${{ steps.check.outputs.need_fix }}
       opentelemetry_version: ${{ steps.check.outputs.opentelemetry_version }}
       opentelemetry_library: ${{ steps.check.outputs.opentelemetry_library }}
     runs-on: ubuntu-latest
     steps:
+      - name: Set default vars
+        run: | 
+          echo "need_fix=false" >> "$GITHUB_OUTPUT"
       - name: Dependabots Bump OpenTelemetry detected 
         id: check
         if: ${{ startsWith(github.event.pull_request.title, env.PR_TITLE_FILTER) }} && 
@@ -24,12 +27,13 @@ jobs:
         run: | 
             echo "opentelemetry_version=$(echo '${{ github.event.pull_request.title }}' | sed 's/.* //')" >> "$GITHUB_OUTPUT"
             echo "opentelemetry_library=$(echo '${{ github.event.pull_request.title }}' | sed 's/.*Bump //' | cut -f1 -d' ')" >> "$GITHUB_OUTPUT"
+            echo "need_fix=true" >> "$GITHUB_OUTPUT"
             echo "Dependabots Bump OpenTelemetry detected"
 
   fix-opentelemetry-dependencies: 
     runs-on: ubuntu-latest
     needs: detect-opentelemetry-upgrades
-    if: needs.detect-opentelemetry-upgrades.outputs.status == 'success'
+    if: ${{ needs.detect-opentelemetry-upgrades.outputs.need_fix == 'true' }}
     steps:
       - uses: actions/checkout@v3  
         with:
