@@ -12,12 +12,8 @@ namespace SampleApi.Two
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection RegisterAppServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection RegisterAppServices(this IServiceCollection services, Settings settings)
         {
-            var settings = configuration.GetSection("Settings").Get<Settings>();
-
-            configuration.LogSettings("Settings");
-
             services.AddSingleton(settings);
 
             var dynamoDbConfig = new AmazonDynamoDBConfig();

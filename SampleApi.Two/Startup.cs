@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 
 namespace SampleApi.Two
@@ -14,11 +15,20 @@ namespace SampleApi.Two
         {
             Console.WriteLine("Starting API");
             _configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .Enrich.FromLogContext()
+                .CreateLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.RegisterAppServices(_configuration);
+            var settings = _configuration.GetSection("Settings").Get<Settings>();
+
+            services.RegisterAppServices(settings);
+            services.RegisterOpenTelemetry(settings);
+            services.AddSingleton(Log.Logger);
             services.AddControllers();
         }
 
