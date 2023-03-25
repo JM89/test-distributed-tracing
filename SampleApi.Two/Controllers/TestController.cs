@@ -1,6 +1,9 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Serilog.Context;
+using SerilogTimings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,11 +18,13 @@ namespace SampleApi.Two.Controllers
     {
         private readonly Settings _settings;
         private readonly IAmazonDynamoDB _dynamoDbClient;
+        private readonly ILogger _logger;
 
-        public TestController(Settings settings, IAmazonDynamoDB dynamoDbClient)
+        public TestController(Settings settings, IAmazonDynamoDB dynamoDbClient, ILogger logger)
         {
             _settings = settings;
             _dynamoDbClient = dynamoDbClient;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,17 +37,24 @@ namespace SampleApi.Two.Controllers
         {
             try
             {
-                var request = new PutItemRequest
+                using (LogContext.PushProperty("Activity Id", Activity.Current?.Id))
                 {
-                    TableName = _settings.TableName,
-                    Item = new Dictionary<string, AttributeValue>()
+                    Log.Logger.Information("Trigger call to DynamoDB");
+                    using (Operation.Time("Call DynamoDB"))
                     {
-                        { "KeyId", new AttributeValue { S = Guid.NewGuid().ToString() } },
-                        { "ParentTraceId", new AttributeValue { S = Activity.Current?.Id ?? "None" } },
-                        { "Payload", new AttributeValue { S = "{\"important-msg\": \"helloworld\"}" } }
+                        var request = new PutItemRequest
+                        {
+                            TableName = _settings.TableName,
+                            Item = new Dictionary<string, AttributeValue>()
+                            {
+                                { "KeyId", new AttributeValue { S = Guid.NewGuid().ToString() } },
+                                { "ParentTraceId", new AttributeValue { S = Activity.Current?.Id ?? "None" } },
+                                { "Payload", new AttributeValue { S = "{\"important-msg\": \"helloworld\"}" } }
+                            }
+                        };
+                        await _dynamoDbClient.PutItemAsync(request, ct);
                     }
-                };
-                await _dynamoDbClient.PutItemAsync(request, ct);
+                }
             }
             catch (Exception ex)
             {
