@@ -40,6 +40,12 @@ You can access Zipkin backend on this URL: http://localhost:9411/. Please bear i
 
 ![](images/ZipKin-2.PNG)
 
+The lambda was configured to use OTLP, to reconfigure the lambda for Zipkin, runs:
+
+```shell
+aws lambda update-function-configuration --function-name streamer-lambda --environment "Variables={Settings__DistributedTracingOptions__Exporter=ZipKin,Settings__DistributedTracingOptions__ZipkinEndpointUrl=http://host.docker.internal:9411/api/v2/spans, Settings__SampleApiTwoTestEndpointUrl=http://host.docker.internal:5124/api/test/test2, Serilog__WriteTo__1__Args__serverUrl=http://host.docker.internal:5341}" --endpoint-url http://localhost:4566 --region eu-west-2 
+```
+
 ### Example with OTEL Collector
 
 Using an OTLP collector, we push traces directly to the collector node (docker container here), that was configured to propagate traces to pre-defined backend. The setup in the application consists of specify the URL of the collector node to push to. A background process will run alongside your code and push traces for you in a transparent way. With OTLP collector, we can plugin more OTEL-compatible backends (such as Prometheus in the example). 
@@ -80,7 +86,7 @@ sh deploy_function.sh
 To check the CW Logs:
 
 ```
-aws logs filter-log-events --log-group "/aws/lambda/streamer-lambda" --endpoint-url http://localhost:4566 --region eu-west-2
+aws logs filter-log-events --log-group-name "/aws/lambda/streamer-lambda" --endpoint-url http://localhost:4566 --region eu-west-2
 
 aws logs get-log-events --log-group "/aws/lambda/streamer-lambda" --log-stream-name "<stream-name>" --endpoint-url http://localhost:4566 --region eu-west-2
 ```
