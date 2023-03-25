@@ -4,6 +4,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using Flurl.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyLambda.Services;
 using Serilog;
 using Shared;
 using System;
@@ -110,14 +111,14 @@ namespace SampleApi.One.Controllers
                         {
                             NewImage = new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue>()
                             {
-                                {"ParentTraceId" , new Amazon.DynamoDBv2.Model.AttributeValue() { S = "00-6354617bdf314d4ebd3fb4cffb641aab-719b9c4acd868142-01" } }
+                                {"ParentTraceId" , new Amazon.DynamoDBv2.Model.AttributeValue() { S = Activity.Current.Id } }
                             }
                         }
                     }
                 }
                 };
 
-                var function = new MyLambda.Function();
+                var function = new MyLambda.Function(_logger, new DynamoDbItemService(new MyLambda.Settings() {ServiceName = _settings.ServiceName, SampleApiTwoTestEndpointUrl = _settings.SampleApiTwoTestEndpointUrl, DistributedTracingOptions = _settings.DistributedTracingOptions }, _activitySource));
 
                 var result = await function.FunctionHandler(dynamoDbEvent, new LambdaContextStub());
             }

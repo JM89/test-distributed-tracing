@@ -14,11 +14,11 @@ namespace MyLambda.Services
         private readonly Settings _settings;
         private readonly ActivitySource _activitySource;
 
-        public DynamoDbItemService(Settings settings)
+        public DynamoDbItemService(Settings settings, ActivitySource activitySource)
         {
             _jsonSerializer = new JsonSerializer();
             _settings = settings;
-            _activitySource = new ActivitySource("Flurl.Instrumentation");
+            _activitySource = activitySource;
         }
 
         public async Task<bool> DoSomethingAsync(DynamodbStreamRecord record)
@@ -66,7 +66,6 @@ namespace MyLambda.Services
                             {
                                 activity = _activitySource.StartActivity("call-api", ActivityKind.Client);
                             }
-
 
                             using (LogContext.PushProperty("Activity StartTimeUtc", activity?.StartTimeUtc))
                             using (LogContext.PushProperty("OtlpEndpointUrl", _settings.DistributedTracingOptions.OtlpEndpointUrl))

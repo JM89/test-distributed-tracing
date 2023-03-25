@@ -24,7 +24,10 @@ namespace SampleApi.One
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.RegisterAppServices(_configuration);
+            var settings = _configuration.GetSection("Settings").Get<Settings>();
+
+            services.RegisterAppServices(settings);
+            services.RegisterOpenTelemetry(settings);
             services.AddSingleton(Log.Logger);
             services.AddControllers();
         }
