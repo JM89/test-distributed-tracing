@@ -10,7 +10,7 @@
     <PackageReference Include="Amazon.Lambda.Core" Version="2.1.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="2.1.0" />
     <PackageReference Include="Amazon.Lambda.DynamoDBEvents" Version="2.1.1" />
-    <PackageReference Include="AWSSDK.SQS" Version="3.7.100.113" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.103.1" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.102.27" />
     <PackageReference Include="Flurl" Version="3.0.7" />
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
