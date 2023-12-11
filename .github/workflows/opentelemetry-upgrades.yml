@@ -39,7 +39,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Setup .NET Core SDK ${{ env.DOTNET_ENV }}
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_ENV }}
       - name: Save library version
